@@ -18,7 +18,7 @@ RELEASE_ROOT = Path(__file__).resolve().parents[1]
 if str(RELEASE_ROOT) not in sys.path:
     sys.path.insert(0, str(RELEASE_ROOT))
 
-from OMhallucination.asset_manager import (
+from owp.assets import (
     build_dataset_manifest,
     cache_root,
     model_repo,

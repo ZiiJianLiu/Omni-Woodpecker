@@ -16,7 +16,7 @@ from torch.nn.utils.rnn import pad_sequence
 import math
 
 try:
-    from OMhallucination.asset_manager import model_repo, resolve_model_path
+    from owp.assets import model_repo, resolve_model_path
 except ImportError:  # pragma: no cover - preserves standalone upstream usage
     model_repo = lambda _kind: "DAMO-NLP-SG/VideoLLaMA2.1-7B-AV"
     resolve_model_path = lambda value, **_kwargs: value

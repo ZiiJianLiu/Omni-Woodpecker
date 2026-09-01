@@ -72,7 +72,7 @@ The prediction is written to `results/owp_smoke.jsonl`.
 Run all rows in the included CMM manifest:
 
 ```bash
-CUDA_VISIBLE_DEVICES=0 python src/run_aaai27_videollama2_owp_5pass_efficiency_20260731.py \
+CUDA_VISIBLE_DEVICES=0 python src/run_owp.py \
   --input data/samples/cmm_owp.jsonl \
   --output results/cmm_owp.jsonl \
   --repeat 1
@@ -85,7 +85,7 @@ For a bounded check, append `--max-rows 10`.
 After making the AVHBench media available as described above, run:
 
 ```bash
-CUDA_VISIBLE_DEVICES=0 python src/run_aaai27_videollama2_owp_5pass_efficiency_20260731.py \
+CUDA_VISIBLE_DEVICES=0 python src/run_owp.py \
   --input data/samples/avhbench_owp.jsonl \
   --output results/avhbench_owp.jsonl \
   --repeat 1
@@ -94,19 +94,55 @@ CUDA_VISIBLE_DEVICES=0 python src/run_aaai27_videollama2_owp_5pass_efficiency_20
 The runner accepts `--max-rows N` for a smaller run and `--dtype float16` when
 BF16 is unavailable.
 
-### Qwen2.5-Omni probe
+### Qwen2.5-Omni
 
-This probe uses the Qwen2.5-Omni checkpoint and the repository-relative
-manifests. It requires the referenced media to be available locally or through
-the AVHBench setup above:
+Run query-conditioned typing on the standard manifest:
 
 ```bash
-CUDA_VISIBLE_DEVICES=0 python src/run_strict_online_prior_typing_probe.py \
+CUDA_VISIBLE_DEVICES=0 python src/probe_qwen.py \
   --records data/manifests/unary_rebalance_manifest.jsonl \
   --output-dir results/qwen_typing \
   --max-samples 16 \
   --device cuda
 ```
+
+Then run the complete Qwen representation intervention. The executor rebuilds
+the full, target-only, non-target-only and text-only views from the same
+manifest, derives the evidence/prior directions, and writes edited answers:
+
+```bash
+CUDA_VISIBLE_DEVICES=0 python src/intervention.py \
+  --manifest data/manifests/unary_rebalance_manifest.jsonl \
+  --runtime-rows data/manifests/unary_rebalance_manifest.jsonl \
+  --output-dir results/qwen_owp \
+  --max-rows 16 \
+  --device cuda
+```
+
+### VideoLLaMA2-AV typing and intervention
+
+The five-pass runner above is the standard end-to-end VideoLLaMA2 workflow.
+For stage-level records used by the same pipeline, run the typing stage first:
+
+```bash
+CUDA_VISIBLE_DEVICES=0 python src/probe_videollama2.py \
+  --benchmark avh \
+  --output-dir results/videollama2_typing \
+  --max-rows 16
+```
+
+Then apply OWP to those typed records:
+
+```bash
+CUDA_VISIBLE_DEVICES=0 python src/intervention_videollama2.py \
+  --benchmark avh \
+  --typing-dir results/videollama2_typing \
+  --output-dir results/videollama2_owp \
+  --max-rows 16
+```
+
+The one-call `src/run_owp.py` workflow above performs the same typing and
+intervention stages internally.
 
 ## 5. Outputs and options
 

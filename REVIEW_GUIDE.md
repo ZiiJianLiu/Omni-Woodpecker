@@ -1,20 +1,21 @@
 # Implementation audit guide
 
-1. Start with `src/run_aaai27_videollama2_owp_5pass_efficiency_20260731.py`.
-   `run_row` executes full, audio-only, visual-only, and text-only views and
-   then performs one edited full-view pass.
-2. Inspect `choose_target` and `carriers_from_cache` in the same file. They use
-   the question, branch predictions, attention, and hidden states; reference
-   labels are not read by the runtime path.
-3. Inspect `build_base_conflict_budget` and `build_frozen_carriers` in
-   `src/run_videollama2_strict_online_prior_typing_probe.py` for the target
-   evidence carrier, orthogonal competing carrier, and conflict budget.
-4. Inspect `frozen_structured_edit_yesno` in
-   `src/run_videollama2_strict_prior_carrier_executor.py` for token-head path
-   scaling and same-layer residual write-back.
-5. Run `python tools/validate_release.py` to verify that all code, shards,
-   annotations, and media are present before loading a checkpoint.
+The release contains two complete OWP inference paths:
 
-OWP is inference-only. The supplied `tools/train.py` entry point is a
-deliberate no-op that records this fact rather than silently changing model
-weights.
+1. `src/run_owp.py` runs the VideoLLaMA2 five-pass benchmark workflow.
+2. `src/probe_qwen.py` produces Qwen2.5-Omni query-conditioned typing records.
+3. `src/intervention.py` performs the Qwen2.5-Omni evidence/prior decomposition
+   and token-head plus residual intervention.
+4. `src/probe_videollama2.py` and `src/intervention_videollama2.py` expose the
+   corresponding VideoLLaMA2 typing and representation-editing stages.
+
+The shared implementation is organized as:
+
+- `owp/models/qwen_omni.py`: Qwen2.5-Omni model and media adapter.
+- `owp/evaluation/`: benchmark loaders and answer-space normalization.
+- `owp/modules/`: query-conditioned evidence scoring and attention utilities.
+- `src/analyze_attention.py`, `src/causal_consistency.py`, `src/avcd.py`, and
+  `src/mad.py`: diagnostics used by the intervention executors.
+
+Run `python tools/validate_release.py` before inference. It checks the source
+layout and bundled annotations without requiring model downloads.

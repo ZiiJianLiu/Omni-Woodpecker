@@ -10,12 +10,8 @@ requires-python = ">=3.10"
 
 [tool.setuptools]
 packages = [
-  "OMhallucination",
-  "OMhallucination.cirpo_omni",
-  "OMhallucination.detectors",
-  "OMhallucination.modules",
-  "OMhallucination.trace_omni",
-  "cirpo_omni",
-  "trace_omni",
-  "omni_dpo",
+  "owp",
+  "owp.evaluation",
+  "owp.models",
+  "owp.modules",
 ]

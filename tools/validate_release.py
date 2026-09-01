@@ -17,13 +17,15 @@ REQUIRED_FILES = (
     "configs/owp_default.json",
     "data/AVHBench/QA.json",
     "data/CMM/all_data_final_reorg.json",
-    "OMhallucination/asset_manager.py",
+    "owp/assets.py",
     "tools/prepare_assets.py",
-    "src/run_aaai27_videollama2_owp_5pass_efficiency_20260731.py",
-    "src/run_prior_carrier_suppression_executor.py",
-    "src/run_strict_online_prior_typing_probe.py",
-    "OMhallucination/qwen_omni_adapter.py",
-    "OMhallucination/modules/question_conditioned_evidence.py",
+    "src/run_owp.py",
+    "src/intervention.py",
+    "src/probe_qwen.py",
+    "src/probe_videollama2.py",
+    "src/intervention_videollama2.py",
+    "owp/models/qwen_omni.py",
+    "owp/modules/question_conditioned_evidence.py",
     "third_party/VideoLLaMA2/videollama2/__init__.py",
     "third_party/HulluEdit/hulluedit/steer.py",
 )
@@ -149,9 +151,10 @@ def main() -> int:
         sys.path.insert(0, str(root))
         sys.path.insert(0, str(root / "src"))
         for module_name in (
-            "OMhallucination.cirpo_omni.benchmark_policy",
-            "OMhallucination.modules.question_conditioned_evidence",
-            "cirpo_omni.benchmark_policy",
+            "owp.assets",
+            "owp.evaluation.answer_policy",
+            "owp.evaluation.datasets",
+            "owp.modules.question_conditioned_evidence",
         ):
             try:
                 importlib.import_module(module_name)

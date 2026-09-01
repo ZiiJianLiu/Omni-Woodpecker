@@ -20,7 +20,7 @@ if [[ ! -f "${SMOKE_VIDEO}" || ! -f "${SMOKE_AUDIO}" ]]; then
   python tools/prepare_assets.py --dataset cmm --max-rows 1 --manifest "${SMOKE_INPUT}"
 fi
 
-exec python src/run_aaai27_videollama2_owp_5pass_efficiency_20260731.py \
+exec python src/run_owp.py \
   --input "${SMOKE_INPUT}" \
   --output results/owp_smoke.jsonl \
   --repeat 1 \

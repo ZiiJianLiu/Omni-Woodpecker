@@ -2,7 +2,7 @@
 
 The source release keeps large model checkpoints and benchmark media out of Git.
 The runtime resolves them from the Hugging Face repositories recorded in
-`OMhallucination/asset_manager.py` and stores them in `OWP_CACHE_DIR` (or the
+`owp/assets.py` and stores them in `OWP_CACHE_DIR` (or the
 default user cache). The first run therefore needs network access and enough
 local cache space; later runs reuse the same snapshots.
 
