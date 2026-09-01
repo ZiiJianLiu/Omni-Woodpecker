@@ -1,0 +1,17 @@
+{
+  "method": "Omni-Woodpecker",
+  "training_required": false,
+  "views": ["full", "audio_only", "visual_only", "text_only"],
+  "evidence_layers": [12, 16, 20],
+  "prior_layers": [24, 26, 27],
+  "all_layers": [12, 16, 20, 24, 26, 27],
+  "qwen_beta": 0.95,
+  "qwen_alpha": 0.10,
+  "cmm_beta": 1.70,
+  "cmm_alpha": 0.25,
+  "videollama2_beta": 0.95,
+  "videollama2_alpha": 0.10,
+  "data_root": "data",
+  "qwen_model": "Qwen/Qwen2.5-Omni-7B",
+  "videollama2_model": "DAMO-NLP-SG/VideoLLaMA2.1-7B-AV"
+}

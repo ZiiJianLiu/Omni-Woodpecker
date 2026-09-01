@@ -1,0 +1,20 @@
+# Runtime and local-environment artifacts.
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+
+# Keep generated evaluation outputs out of future commits. The checked-in
+# smoke outputs can still be force-added when desired for an artifact release.
+results/*
+!results/.gitkeep
+
+# Large models and media are fetched at runtime from Hugging Face.  The local
+# copies may remain in a development checkout, but a source-only GitHub commit
+# must not include them.
+/models/*
+!/models/.gitkeep
+/data/AVHBench/videos/
+/data/AVHBench/audios/
+/data/CMM/reorg_raw_files/

@@ -1,0 +1,10 @@
+{
+  "model_type": "qwen2_5_omni",
+  "model_path": "Qwen/Qwen2.5-Omni-7B",
+  "device": "cuda",
+  "dtype": "bfloat16",
+  "evidence_layers": [12, 16, 20],
+  "prior_layers": [24, 26, 27],
+  "forward_passes_per_sample": 5,
+  "training_required": false
+}

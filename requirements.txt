@@ -1,0 +1,25 @@
+# Tested with Python 3.10/3.12, CUDA 12.x, and PyTorch 2.7.1.
+# Install a CUDA-compatible PyTorch build first when the platform does not use
+# the default wheel index.
+torch>=2.2
+torchaudio>=2.2
+torchvision>=0.17
+transformers>=4.51.3
+huggingface_hub>=0.30
+accelerate>=0.30
+qwen-omni-utils[decord]>=0.0.5
+numpy>=1.24
+scipy>=1.10
+tqdm>=4.65
+Pillow>=10.0
+opencv-python>=4.8
+imageio>=2.31
+imageio-ffmpeg>=0.4
+decord>=0.6
+moviepy>=1.0.3
+librosa>=0.10
+soundfile>=0.12
+einops>=0.7
+pytorchvideo>=0.1.5
+sentencepiece>=0.1.99
+protobuf>=4.25

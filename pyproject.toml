@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "omni-woodpecker"
+version = "0.1.0"
+description = "Training-free cross-modal hallucination mitigation for omni-modal language models"
+requires-python = ">=3.10"
+
+[tool.setuptools]
+packages = [
+  "OMhallucination",
+  "OMhallucination.cirpo_omni",
+  "OMhallucination.detectors",
+  "OMhallucination.modules",
+  "OMhallucination.trace_omni",
+  "cirpo_omni",
+  "trace_omni",
+  "omni_dpo",
+]

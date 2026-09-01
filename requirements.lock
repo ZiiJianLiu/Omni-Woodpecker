@@ -1,0 +1,23 @@
+# Versions observed in the release validation environment (Python 3.12, CUDA 12.6).
+accelerate==1.7.0
+decord==0.6.0
+einops==0.8.1
+imageio==2.37.3
+imageio-ffmpeg==0.6.0
+librosa==0.11.0
+moviepy==1.0.3
+numpy==1.26.4
+opencv-python==4.11.0
+Pillow==11.2.1
+protobuf==3.20.3
+pytorchvideo==0.1.5
+safetensors==0.5.3
+scipy==1.12.0
+sentencepiece==0.2.1
+soundfile==0.13.1
+torch==2.7.1+cu126
+torchaudio==2.7.1+cu126
+torchvision==0.22.1+cu126
+tqdm==4.67.1
+transformers==4.55.0
+huggingface-hub==0.34.4

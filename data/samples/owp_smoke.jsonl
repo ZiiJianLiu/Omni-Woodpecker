@@ -1,0 +1,1 @@
+{"sample_id": "avhbench:02060:Video-driven Audio Hallucination", "benchmark": "avhbench", "mad_protocol_task": "Video-driven Audio Hallucination", "question": "Is the car making sound in the audio?", "reference_answer": "Yes", "video_id": "02060", "video_path": "data/AVHBench/videos/02060.mp4", "audio_path": "data/AVHBench/audios/02060.wav", "_efficiency_order": 0}

@@ -1,0 +1,9 @@
+{
+  "model_type": "videollama2_qwen2",
+  "model_path": "DAMO-NLP-SG/VideoLLaMA2.1-7B-AV",
+  "vision_tower": "google/siglip-so400m-patch14-384",
+  "device": "cuda",
+  "dtype": "bfloat16",
+  "forward_passes_per_sample": 5,
+  "training_required": false
+}

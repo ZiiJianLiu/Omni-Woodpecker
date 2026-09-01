@@ -1,0 +1,3 @@
+# OWP is distributed as a source-only repository.  Checkpoints and benchmark
+# media are resolved from Hugging Face at runtime and are intentionally not
+# tracked by Git or Git LFS.
