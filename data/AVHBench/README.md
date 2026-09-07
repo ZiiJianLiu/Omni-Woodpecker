@@ -1,8 +1,9 @@
 # AVHBench annotation index
 
-This directory is the local AVHBench copy used by the OWP paper. It contains
-`QA.json` with 6,408 annotations, 2,327 video files, and the matching 2,327
-audio files. The OWP comparison uses the 5,302 non-caption questions: 1,136
+This directory contains the AVHBench annotation index used by OWP. `QA.json`
+has 6,408 annotations. The source release does not track the corresponding
+media; callers provide local files or configure an equivalent Hugging Face
+dataset repository. The OWP comparison uses the 5,302 non-caption questions: 1,136
 audio-driven visual hallucination questions, 2,290 video-driven audio
 hallucination questions, and 1,876 audiovisual matching questions.
 

@@ -74,7 +74,7 @@ def _env_int(name: str, default: int) -> int:
 
 
 def _preserve_cuda_allocator_cache_enabled() -> bool:
-    return _env_flag("OMNI_PRESERVE_CUDA_CACHE") or _env_flag("OMNI_INPROCESS_GPU_CACHE_RESERVE")
+    return _env_flag("OWP_PRESERVE_CUDA_CACHE") or _env_flag("OWP_INPROCESS_GPU_CACHE_RESERVE")
 
 
 def _safe_empty_cache(force: bool = False) -> None:
@@ -218,13 +218,13 @@ class QwenOmniAdapter:
         )
 
         logger.info("加载 Qwen2.5-Omni: %s → %s", self.model_path, self.device)
-        attn_implementation = os.environ.get("OMNI_ATTN_IMPLEMENTATION", "sdpa").strip() or "sdpa"
-        use_fast_processor = os.environ.get("OMNI_USE_FAST_PROCESSOR", "0").strip().lower() in {
+        attn_implementation = os.environ.get("OWP_ATTN_IMPLEMENTATION", "sdpa").strip() or "sdpa"
+        use_fast_processor = os.environ.get("OWP_USE_FAST_PROCESSOR", "0").strip().lower() in {
             "1", "true", "yes", "y", "on",
         }
         logger.info("Qwen2.5-Omni attention backend: %s", attn_implementation)
         logger.info("Qwen2.5-Omni processor use_fast=%s", use_fast_processor)
-        thinker_only = _env_flag("OMNI_THINKER_ONLY")
+        thinker_only = _env_flag("OWP_THINKER_ONLY")
         model_class = Qwen2_5OmniThinkerForConditionalGeneration if thinker_only else Qwen2_5OmniForConditionalGeneration
         logger.info("Qwen2.5-Omni thinker-only load=%s", thinker_only)
 
@@ -242,7 +242,7 @@ class QwenOmniAdapter:
             visible_gpu_count = torch.cuda.device_count()
             if visible_gpu_count <= 0:
                 raise RuntimeError('device=auto 需要至少一张可见 CUDA GPU')
-            per_gpu_limit = os.environ.get('OMNI_MAX_MEMORY_PER_GPU', '40GB').strip()
+            per_gpu_limit = os.environ.get('OWP_MAX_MEMORY_PER_GPU', '40GB').strip()
             disable_max_memory = per_gpu_limit.lower() in {"", "none", "off", "disable", "disabled", "unlimited"}
             if disable_max_memory:
                 logger.info(
@@ -391,15 +391,15 @@ class QwenOmniAdapter:
     def _maybe_reserve_reusable_cuda_cache(self) -> None:
         if not torch.cuda.is_available():
             return
-        if not _env_flag("OMNI_INPROCESS_GPU_CACHE_RESERVE"):
+        if not _env_flag("OWP_INPROCESS_GPU_CACHE_RESERVE"):
             return
-        keep_free_mib = max(0, _env_int("OMNI_INPROCESS_RESERVE_KEEP_FREE_MB", 16384))
+        keep_free_mib = max(0, _env_int("OWP_INPROCESS_RESERVE_KEEP_FREE_MB", 16384))
         only_if_free_mib = max(
             keep_free_mib,
-            _env_int("OMNI_INPROCESS_RESERVE_ONLY_IF_FREE_MB", keep_free_mib + 4096),
+            _env_int("OWP_INPROCESS_RESERVE_ONLY_IF_FREE_MB", keep_free_mib + 4096),
         )
-        safety_mib = max(0, _env_int("OMNI_INPROCESS_RESERVE_SAFETY_MIB", 1024))
-        chunk_mib = max(16, _env_int("OMNI_INPROCESS_RESERVE_CHUNK_MIB", 256))
+        safety_mib = max(0, _env_int("OWP_INPROCESS_RESERVE_SAFETY_MIB", 1024))
+        chunk_mib = max(16, _env_int("OWP_INPROCESS_RESERVE_CHUNK_MIB", 256))
         device_indices = self._active_cuda_device_indices()
         if not device_indices:
             logger.info("Skip reusable CUDA cache warmup: no active CUDA devices found")
@@ -444,7 +444,7 @@ class QwenOmniAdapter:
 
     @contextmanager
     def temporary_release_cuda_reserve(self, reason: str):
-        should_manage = _env_flag("OMNI_INPROCESS_GPU_CACHE_RESERVE")
+        should_manage = _env_flag("OWP_INPROCESS_GPU_CACHE_RESERVE")
         released = False
         if should_manage and self._cuda_reserve_suspend_depth == 0:
             released = self._release_live_cuda_reserve(reason=reason)

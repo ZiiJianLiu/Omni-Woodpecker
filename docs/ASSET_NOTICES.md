@@ -15,11 +15,10 @@ local cache space; later runs reuse the same snapshots.
   AVHBench's official README currently points to a Google Drive media subset;
   the package therefore requires an explicit `OWP_AVHBENCH_DATASET_ID` for a
   verified Hugging Face mirror of the exact release used in the paper.
-- `third_party/VideoLLaMA2/` contains the runtime source required to execute
-  the remote VideoLLaMA2 checkpoint. Its upstream copyright headers are kept
-  in the source files.
-- `third_party/HulluEdit/` contains the lightweight steering module needed by
-  the optional HulluEdit comparison path; its upstream README is retained.
+- `third_party/VideoLLaMA2/` contains only the model and preprocessing runtime
+  required to execute the remote VideoLLaMA2 checkpoint. Its upstream copyright
+  headers are kept in the source files; training, evaluation, and serving code
+  is excluded from this delivery.
 
 Before public redistribution outside the paper artifact, review the original
 dataset and checkpoint licenses for the intended use and jurisdiction.

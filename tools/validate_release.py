@@ -12,6 +12,7 @@ from pathlib import Path
 REQUIRED_FILES = (
     ".gitattributes",
     "README.md",
+    "ALGORITHM_SPEC.md",
     "requirements.txt",
     "run_smoke.sh",
     "configs/owp_default.json",
@@ -20,6 +21,7 @@ REQUIRED_FILES = (
     "owp/assets.py",
     "tools/prepare_assets.py",
     "src/run_owp.py",
+    "src/owp_infer.py",
     "src/intervention.py",
     "src/probe_qwen.py",
     "src/probe_videollama2.py",
@@ -27,7 +29,11 @@ REQUIRED_FILES = (
     "owp/models/qwen_omni.py",
     "owp/modules/question_conditioned_evidence.py",
     "third_party/VideoLLaMA2/videollama2/__init__.py",
-    "third_party/HulluEdit/hulluedit/steer.py",
+    "sample_data/owp_input.jsonl",
+    "sample_data/owp_expected_output.jsonl",
+    "sample_data/README.md",
+    "examples/run_inference.py",
+    "tests/test_owp_infer_contract.py",
 )
 
 LFS_POINTER_PREFIX = b"version https://git-lfs.github.com/spec/v1"
@@ -35,6 +41,18 @@ LFS_POINTER_PREFIX = b"version https://git-lfs.github.com/spec/v1"
 
 def load_json(path: Path):
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def load_jsonl(path: Path) -> list[dict]:
+    rows = []
+    for line_number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+        if not line.strip():
+            continue
+        value = json.loads(line)
+        if not isinstance(value, dict):
+            raise ValueError(f"{path}:{line_number} is not a JSON object")
+        rows.append(value)
+    return rows
 
 
 def fail(message: str, errors: list[str]) -> None:
@@ -65,6 +83,42 @@ def main() -> int:
         path = root / relative
         if not path.is_file():
             fail(f"missing required file: {relative}", errors)
+
+    try:
+        example_input = load_jsonl(root / "sample_data/owp_input.jsonl")
+        example_output = load_jsonl(root / "sample_data/owp_expected_output.jsonl")
+        input_ids = [str(row.get("sample_id") or "") for row in example_input]
+        output_ids = [str(row.get("sample_id") or "") for row in example_output]
+        if not input_ids or any(not value for value in input_ids) or len(set(input_ids)) != len(input_ids):
+            fail("sample_data/owp_input.jsonl must contain unique non-empty sample_id values", errors)
+        if len(output_ids) != len(input_ids) or len(set(output_ids)) != len(output_ids):
+            fail("sample_data/owp_expected_output.jsonl must contain exactly one unique row per input", errors)
+        elif set(input_ids) != set(output_ids):
+            fail("sample_data input/output sample_id sets do not match", errors)
+        required_input = {"sample_id", "question"}
+        required_output = {
+            "sample_id",
+            "answer",
+            "baseline_answer",
+            "target_modality",
+            "intervention_applied",
+            "status",
+            "error",
+        }
+        for row in example_input:
+            if not (required_input <= row.keys()):
+                fail(f"sample_data input missing fields: {sorted(required_input - row.keys())}", errors)
+            if not row.get("video_path") and not row.get("audio_path"):
+                fail(f"example input sample_id={row.get('sample_id')} has no media path", errors)
+        for row in example_output:
+            if not (required_output <= row.keys()):
+                fail(f"sample_data output missing fields: {sorted(required_output - row.keys())}", errors)
+            if row.get("status") not in {"ok", "error"}:
+                fail(f"example output has invalid status for sample_id={row.get('sample_id')}", errors)
+            if row.get("status") == "ok" and row.get("answer") not in {"Yes", "No"}:
+                fail(f"example output has invalid answer for sample_id={row.get('sample_id')}", errors)
+    except Exception as exc:
+        fail(f"example contract validation failed: {type(exc).__name__}: {exc}", errors)
 
     for subtree in (root / "data", root / "models"):
         if subtree.exists():
@@ -155,6 +209,7 @@ def main() -> int:
             "owp.evaluation.answer_policy",
             "owp.evaluation.datasets",
             "owp.modules.question_conditioned_evidence",
+            "owp_infer",
         ):
             try:
                 importlib.import_module(module_name)

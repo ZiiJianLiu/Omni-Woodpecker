@@ -12,10 +12,17 @@ from .beats.BEATs import BEATsConfig, BEATs
 
 
 def _resolve_bundled_vision_tower(name):
-    """Prefer the release-local SigLIP checkpoint when it is available."""
+    """Resolve SigLIP through the same OWP cache used by the main checkpoint."""
     bundled = os.environ.get("OWP_SIGLIP_PATH", "").strip()
     if bundled and Path(bundled).is_dir() and "siglip" in str(name).lower():
         return bundled
+    if "siglip" in str(name).lower():
+        try:
+            from owp.assets import resolve_model_path
+        except ImportError:
+            # Preserve standalone upstream use outside the OWP checkout.
+            return name
+        return resolve_model_path(name, kind="siglip")
     return name
 
 class CLIPVisionTower(nn.Module):

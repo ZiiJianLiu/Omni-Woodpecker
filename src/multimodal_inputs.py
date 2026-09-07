@@ -207,14 +207,31 @@ def language_layers(model: Any) -> torch.nn.ModuleList:
 def prepare_media(processor: Mapping[str, Any], row: Mapping[str, Any], branch: str) -> tuple[Any, str, str | None]:
     video_path = safe_text(row.get("video_path"))
     audio_path = safe_text(row.get("audio_path"))
+    video_available = bool(video_path and Path(video_path).is_file())
+    audio_available = bool(audio_path and Path(audio_path).is_file())
     if branch == "full":
-        if audio_path and Path(audio_path).is_file():
+        if video_available and audio_available:
             return {"video": processor["video"](video_path, va=False), "audio": processor["audio"](audio_path)}, "video", DEFAULT_VIDEO_TOKEN
-        return processor["video"](video_path, va=True), "video", DEFAULT_VIDEO_TOKEN
+        if video_available:
+            # A missing audio path is a valid visual-only request. Do not ask
+            # the video decoder to synthesize an audio stream from a silent
+            # container.
+            return processor["video"](video_path, va=False), "video", DEFAULT_VIDEO_TOKEN
+        if audio_available:
+            return processor["audio"](audio_path), "audio", DEFAULT_AUDIO_TOKEN
+        return None, "text", ""
     if branch == "visual":
-        return processor["video"](video_path, va=False), "video", DEFAULT_VIDEO_TOKEN
+        return (
+            (processor["video"](video_path, va=False), "video", DEFAULT_VIDEO_TOKEN)
+            if video_available
+            else (None, "text", "")
+        )
     if branch == "audio":
-        return processor["audio"](audio_path), "audio", DEFAULT_AUDIO_TOKEN
+        return (
+            (processor["audio"](audio_path), "audio", DEFAULT_AUDIO_TOKEN)
+            if audio_available
+            else (None, "text", "")
+        )
     if branch == "text":
         return None, "text", ""
     raise ValueError(f"Unsupported branch={branch!r}")

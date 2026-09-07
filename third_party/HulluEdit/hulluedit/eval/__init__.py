@@ -1,2 +1,0 @@
-# Hulluedit evaluation module
-

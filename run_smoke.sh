@@ -8,20 +8,8 @@ cd "${RELEASE_ROOT}"
 : "${CUDA_VISIBLE_DEVICES:=0}"
 export CUDA_VISIBLE_DEVICES
 
-SMOKE_INPUT="data/samples/owp_smoke.jsonl"
-SMOKE_VIDEO="data/AVHBench/videos/02060.mp4"
-SMOKE_AUDIO="data/AVHBench/audios/02060.wav"
-if [[ ! -f "${SMOKE_VIDEO}" || ! -f "${SMOKE_AUDIO}" ]]; then
-  # The source-only release has no media payload.  Prepare one CMM row in the
-  # user cache so the smoke test remains a single command.  Full AVHBench
-  # preparation is intentionally separate because its official media release
-  # is not currently mirrored on Hugging Face.
-  SMOKE_INPUT="${OWP_CACHE_DIR:-${HOME}/.cache/omni-woodpecker}/manifests/cmm_smoke.jsonl"
-  python tools/prepare_assets.py --dataset cmm --max-rows 1 --manifest "${SMOKE_INPUT}"
-fi
-
-exec python src/run_owp.py \
-  --input "${SMOKE_INPUT}" \
+exec python src/owp_infer.py \
+  --input sample_data/owp_input.jsonl \
   --output results/owp_smoke.jsonl \
-  --repeat 1 \
+  --model videollama2 \
   --max-rows 1

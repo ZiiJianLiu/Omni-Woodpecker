@@ -44,7 +44,7 @@ from pilot_hidden_state_editing import (  # noqa: E402
 )
 
 
-DEFAULT_MANIFEST = ROOT / "data" / "manifests" / "unary_rebalance_manifest.jsonl"
+DEFAULT_MANIFEST = None
 DEFAULT_OUTPUT_DIR = ROOT / "results" / "qwen_owp_carrier_audit"
 
 OFFLINE_EVAL_FIELD_NAMES = {
@@ -77,9 +77,9 @@ def parse_args() -> argparse.Namespace:
             "would preserve evidence."
         )
     )
-    parser.add_argument("--manifest", type=Path, default=DEFAULT_MANIFEST)
-    parser.add_argument("--audio-manifest", type=Path, default=DEFAULT_AUDIO_MANIFEST)
-    parser.add_argument("--audio-final", type=Path, default=DEFAULT_AUDIO_FINAL)
+    parser.add_argument("--manifest", type=Path, required=True)
+    parser.add_argument("--audio-manifest", type=Path, required=True)
+    parser.add_argument("--audio-final", type=Path, required=True)
     parser.add_argument("--avh-qa", type=Path, default=DEFAULT_AVH_QA)
     parser.add_argument("--avh-video-dir", type=Path, default=DEFAULT_AVH_VIDEO_DIR)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)

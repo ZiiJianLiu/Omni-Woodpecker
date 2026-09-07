@@ -27,7 +27,6 @@ for path in (SCRIPT_DIR, ROOT, ROOT.parent):
         sys.path.insert(0, str(path))
 
 from analyze_carrier_coupling import (  # noqa: E402
-    DEFAULT_MANIFEST,
     choose_rows,
     cosine,
     direction_from_captures,
@@ -52,11 +51,6 @@ from patch_target_branch import (  # noqa: E402
     yes_no_token_ids,
 )
 from pilot_hidden_state_editing import (  # noqa: E402
-    DEFAULT_AUDIO_FINAL,
-    DEFAULT_AUDIO_MANIFEST,
-    DEFAULT_AVH_QA,
-    DEFAULT_AVH_VIDEO_DIR,
-    DEFAULT_VISUAL_REPLAY,
     capture_prompt_row,
     normalize_binary_label,
 )
@@ -69,13 +63,8 @@ from avcd import resolve_avcd_label_masks  # noqa: E402
 
 DEFAULT_OUTPUT_DIR = ROOT / "results" / "qwen_owp"
 HULLUEDIT_ROOT = ROOT / "third_party" / "HulluEdit"
-if HULLUEDIT_ROOT.exists() and str(HULLUEDIT_ROOT) not in sys.path:
-    sys.path.insert(0, str(HULLUEDIT_ROOT))
-try:
-    from hulluedit.steer import HullueditConfig, HullueditSteerer  # type: ignore  # noqa: E402
-except Exception:  # pragma: no cover - optional external research dependency
-    HullueditConfig = None  # type: ignore[assignment]
-    HullueditSteerer = None  # type: ignore[assignment]
+HullueditConfig = None  # type: ignore[assignment]
+HullueditSteerer = None  # type: ignore[assignment]
 
 
 AXIS_OTHER_REFERENCE = "__OTHER__"
@@ -697,23 +686,29 @@ def parse_args() -> argparse.Namespace:
             "that prior direction at late answer-carrier layers."
         )
     )
-    parser.add_argument("--manifest", type=Path, default=DEFAULT_MANIFEST)
+    parser.add_argument(
+        "--manifest",
+        type=Path,
+        required=True,
+        help="Runtime manifest supplied by the OWP use-case wrapper.",
+    )
     parser.add_argument(
         "--runtime-rows",
         type=Path,
-        default=None,
+        required=True,
         help=(
-            "Optional JSONL keyed by sample_id with full benchmark runtime fields. "
-            "When set, manifest rows are joined against this file instead of the legacy fixed1000 loaders."
+            "Runtime JSONL keyed by sample_id with full request fields. It is joined "
+            "against the manifest without consulting legacy experiment manifests."
         ),
     )
-    parser.add_argument("--audio-manifest", type=Path, default=DEFAULT_AUDIO_MANIFEST)
-    parser.add_argument("--audio-final", type=Path, default=DEFAULT_AUDIO_FINAL)
-    parser.add_argument("--visual-replay", type=Path, default=DEFAULT_VISUAL_REPLAY)
-    parser.add_argument("--avh-qa", type=Path, default=DEFAULT_AVH_QA)
-    parser.add_argument("--avh-video-dir", type=Path, default=DEFAULT_AVH_VIDEO_DIR)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
     parser.add_argument("--model-path", type=str, default=DEFAULT_MODEL_PATH)
+    parser.add_argument(
+        "--dtype",
+        choices=("float16", "bfloat16"),
+        default="bfloat16",
+        help="Floating-point type used when loading the Qwen checkpoint.",
+    )
     parser.add_argument("--device", type=str, default="auto")
     parser.add_argument("--seed", type=int, default=20260603)
     parser.add_argument("--max-rows", type=int, default=16)
@@ -17889,7 +17884,6 @@ def branch_record(
 
 def run() -> None:
     args = parse_args()
-    args.manifest_visual_replay = args.visual_replay
     args.output_dir.mkdir(parents=True, exist_ok=True)
     layers = sorted({int(layer) for layer in args.layers})
     layer_groups = parse_layer_groups(args.layer_groups, layers)
@@ -18098,12 +18092,7 @@ def run() -> None:
     run_config = {
         "kind": "qwen_owp_intervention",
         "manifest": str(args.manifest),
-        "runtime_rows": str(args.runtime_rows) if args.runtime_rows is not None else None,
-        "audio_manifest": str(args.audio_manifest),
-        "audio_final": str(args.audio_final),
-        "visual_replay": str(args.visual_replay),
-        "avh_qa": str(args.avh_qa),
-        "avh_video_dir": str(args.avh_video_dir),
+        "runtime_rows": str(args.runtime_rows),
         "output_dir": str(args.output_dir),
         "model_path": str(args.model_path),
         "model_text_num_layers": model_text_num_layers,
@@ -18380,7 +18369,12 @@ def run() -> None:
         print(f"[qwen-owp] plan-only selected={len(selected)} output_dir={args.output_dir}")
         return
 
-    adapter = QwenOmniAdapter(model_path=args.model_path, device=args.device, max_new_tokens=4)
+    adapter = QwenOmniAdapter(
+        model_path=args.model_path,
+        device=args.device,
+        torch_dtype=torch.float16 if args.dtype == "float16" else torch.bfloat16,
+        max_new_tokens=4,
+    )
     default_yes_id, default_no_id = yes_no_token_ids(adapter)
     yes_id, no_id = default_yes_id, default_no_id
     budget = video_budget(args)

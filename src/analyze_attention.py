@@ -34,7 +34,7 @@ from owp.evaluation.answer_policy import (
 )
 
 
-DEFAULT_SAMPLES = ROOT / "data" / "manifests" / "unary_rebalance_manifest.jsonl"
+DEFAULT_SAMPLES = None
 DEFAULT_OUTPUT_DIR = ROOT / "results" / "qwen_owp_attention"
 DEFAULT_MODEL_PATH = "Qwen/Qwen2.5-Omni-7B"
 
@@ -48,7 +48,7 @@ def parse_args() -> argparse.Namespace:
             "it observes answer-token attention to audio/video/text tokens inside the full input."
         )
     )
-    parser.add_argument("--samples", type=Path, default=DEFAULT_SAMPLES)
+    parser.add_argument("--samples", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
     parser.add_argument("--model-path", type=str, default=DEFAULT_MODEL_PATH)
     parser.add_argument("--device", type=str, default="auto")

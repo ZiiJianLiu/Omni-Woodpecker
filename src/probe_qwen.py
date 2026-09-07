@@ -41,7 +41,6 @@ from mad import (
 )
 
 
-DEFAULT_RECORDS = ROOT / "data" / "manifests" / "unary_rebalance_manifest.jsonl"
 DEFAULT_OUTPUT_DIR = ROOT / "results" / "qwen_owp_typing"
 DEFAULT_MODEL_PATH = "Qwen/Qwen2.5-Omni-7B"
 
@@ -122,9 +121,20 @@ def parse_args() -> argparse.Namespace:
             "Benchmark task labels are retained only for offline evaluation."
         )
     )
-    parser.add_argument("--records", type=Path, default=DEFAULT_RECORDS)
+    parser.add_argument(
+        "--records",
+        type=Path,
+        required=True,
+        help="Runtime request JSONL supplied by the OWP use-case wrapper.",
+    )
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
     parser.add_argument("--model-path", type=str, default=DEFAULT_MODEL_PATH)
+    parser.add_argument(
+        "--dtype",
+        choices=("float16", "bfloat16"),
+        default="bfloat16",
+        help="Floating-point type used when loading the Qwen checkpoint.",
+    )
     parser.add_argument("--device", type=str, default="auto")
     parser.add_argument("--sample-id", type=str, default="")
     parser.add_argument("--sample-id-file", type=Path, default=None)
@@ -1297,6 +1307,8 @@ def skipped_record(
         "benchmark": safe_text(row.get("benchmark")),
         "task_family": task_family(row),
         "question": safe_text(row.get("question")),
+        "video_path": safe_text(sample.get("video_path")),
+        "audio_path": safe_text(sample.get("audio_path")),
         "formatted_question": formatted_question,
         "target_modality": "unknown",
         "target_modality_reason": "runtime_exception",
@@ -1557,6 +1569,7 @@ def run() -> None:
     adapter = QwenOmniAdapter(
         model_path=args.model_path,
         device=args.device,
+        torch_dtype=torch.float16 if args.dtype == "float16" else torch.bfloat16,
         max_new_tokens=8,
     )
     budget = video_budget(args)
@@ -1665,6 +1678,8 @@ def run() -> None:
                     "benchmark": safe_text(row.get("benchmark")),
                     "task_family": task_family(row),
                     "question": safe_text(row.get("question")),
+                    "video_path": video_path,
+                    "audio_path": audio_path,
                     "formatted_question": question,
                     "answer_space_kind": answer_space.kind,
                     "target_modality": safe_text(online_target.get("target_modality")),

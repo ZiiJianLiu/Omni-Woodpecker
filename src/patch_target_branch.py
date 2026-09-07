@@ -29,7 +29,7 @@ from owp.evaluation.answer_policy import (
 )
 
 
-DEFAULT_SAMPLES = ROOT / "data" / "manifests" / "unary_rebalance_manifest.jsonl"
+DEFAULT_SAMPLES = None
 DEFAULT_OUTPUT_DIR = ROOT / "results" / "qwen_owp_branch_patching"
 DEFAULT_MODEL_PATH = "Qwen/Qwen2.5-Omni-7B"
 
@@ -46,7 +46,7 @@ def parse_args() -> argparse.Namespace:
             "into the full branch and compare against non-target/text controls."
         )
     )
-    parser.add_argument("--samples", type=Path, default=DEFAULT_SAMPLES)
+    parser.add_argument("--samples", type=Path, required=True)
     parser.add_argument(
         "--filter-target-disagrees-from-records",
         type=Path,

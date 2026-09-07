@@ -1,2 +1,0 @@
-# Hulluedit Analysis Module
-

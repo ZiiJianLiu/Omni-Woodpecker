@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Five-pass, cache-reusing OWP efficiency runner for VideoLLaMA2.1-7B-AV.
 
-Each timed sample performs exactly four diagnostic views (full, audio, visual,
-and text) plus one intervened full-view pass.  Hidden states and source
-attention measured during diagnosis are reused to construct the intervention.
+Each sample performs four diagnostic views (full, audio, visual, and text) and
+adds one intervened full-view pass only when the target and full views disagree.
+Hidden states and source attention measured during diagnosis are reused to
+construct the intervention; identity rows therefore finish after four passes.
 """
 from __future__ import annotations
 
@@ -366,6 +367,16 @@ def run_row(*, model: Any, tokenizer: Any, processor: Mapping[str, Any], row: Ma
         "target_modality": target,
         "oelpr_conflict_budget": budget,
     }
+    if current == candidate:
+        return {
+            "target_modality": target,
+            "baseline_prediction": current,
+            "intervened_prediction": current,
+            "intervention_applied": False,
+            "attention_dominant_modality": attention["dominant_modality"],
+            "conflict_budget": float(budget.get("budget") or 0.0),
+            "_expected_forward_calls": 4,
+        }
     beta, alpha = (1.7, 0.25) if row.get("benchmark") == "cmm" else (0.95, 0.10)
     edited = executor.frozen_structured_edit_yesno(
         model=model,
@@ -385,15 +396,17 @@ def run_row(*, model: Any, tokenizer: Any, processor: Mapping[str, Any], row: Ma
         hidden_update_mode="apply",
         token_head_update_mode="apply",
         token_head_value_operator="allpath_token_scaling",
-        prior_suppression_operator="path_residual_minimal",
-        evidence_transfer_mode="path_answer_margin_minimal",
+        prior_suppression_operator="up_r_projection",
+        evidence_transfer_mode="legacy_projection_gap",
     )
     return {
         "target_modality": target,
         "baseline_prediction": current,
         "intervened_prediction": edited["prediction"],
+        "intervention_applied": True,
         "attention_dominant_modality": attention["dominant_modality"],
         "conflict_budget": float(budget.get("budget") or 0.0),
+        "_expected_forward_calls": 5,
     }
 
 
@@ -429,8 +442,9 @@ def main() -> None:
                 error = repr(exc)
             torch.cuda.synchronize()
             calls = int(forward_counter[0]) - counter_start
-            if not error and calls != 5:
-                error = f"expected exactly 5 model forwards, observed {calls}"
+            expected_calls = int(details.pop("_expected_forward_calls", 5))
+            if not error and calls != expected_calls:
+                error = f"expected exactly {expected_calls} model forwards, observed {calls}"
             append_jsonl(
                 args.output,
                 {
@@ -447,8 +461,6 @@ def main() -> None:
                     **details,
                 },
             )
-            if error:
-                raise RuntimeError(f"sample={row.get('sample_id')}: {error}")
     finally:
         handle.remove()
 

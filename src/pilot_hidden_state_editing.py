@@ -39,9 +39,9 @@ from patch_target_branch import (  # noqa: E402
 )
 
 
-DEFAULT_AUDIO_MANIFEST = ROOT / "data" / "manifests" / "unary_rebalance_manifest.jsonl"
-DEFAULT_AUDIO_FINAL = ROOT / "data" / "manifests" / "audio_final_rows.jsonl"
-DEFAULT_VISUAL_REPLAY = ROOT / "data" / "manifests" / "visual_replay_rows.jsonl"
+DEFAULT_AUDIO_MANIFEST = None
+DEFAULT_AUDIO_FINAL = None
+DEFAULT_VISUAL_REPLAY = None
 DEFAULT_AVH_QA = ROOT / "data" / "AVHBench" / "QA.json"
 DEFAULT_AVH_VIDEO_DIR = ROOT / "data" / "AVHBench" / "videos"
 DEFAULT_OUTPUT_DIR = ROOT / "results" / "qwen_owp_hidden_editing"
@@ -64,9 +64,9 @@ def parse_args() -> argparse.Namespace:
             "edits to the full branch answer position."
         )
     )
-    parser.add_argument("--audio-manifest", type=Path, default=DEFAULT_AUDIO_MANIFEST)
-    parser.add_argument("--audio-final", type=Path, default=DEFAULT_AUDIO_FINAL)
-    parser.add_argument("--visual-replay", type=Path, default=DEFAULT_VISUAL_REPLAY)
+    parser.add_argument("--audio-manifest", type=Path, required=True)
+    parser.add_argument("--audio-final", type=Path, required=True)
+    parser.add_argument("--visual-replay", type=Path, required=True)
     parser.add_argument("--avh-qa", type=Path, default=DEFAULT_AVH_QA)
     parser.add_argument("--avh-video-dir", type=Path, default=DEFAULT_AVH_VIDEO_DIR)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)

@@ -25,7 +25,7 @@ from videollama2.constants import DEFAULT_AUDIO_TOKEN, DEFAULT_VIDEO_TOKEN  # no
 from videollama2.mm_utils import KeywordsStoppingCriteria, tokenizer_multimodal_token  # noqa: E402
 
 
-DEFAULT_MANIFEST = ROOT / "data" / "manifests" / "unary_rebalance_manifest.jsonl"
+DEFAULT_MANIFEST = None
 DEFAULT_POLICY_ROWS: Path | None = None
 DEFAULT_OUTPUT_DIR = ROOT / "results" / "videollama2_owp"
 DEFAULT_AVHBENCH_DIR = ROOT / "data" / "AVHBench"
@@ -648,7 +648,7 @@ def groupby_key(rows: Sequence[Mapping[str, Any]], key: str) -> dict[str, list[M
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="VideoLLaMA2-AV OWP transfer runtime.")
-    parser.add_argument("--manifest", type=Path, default=DEFAULT_MANIFEST)
+    parser.add_argument("--manifest", type=Path, required=True)
     parser.add_argument("--policy-rows", type=Path, default=DEFAULT_POLICY_ROWS)
     parser.add_argument("--avhbench-dir", type=Path, default=DEFAULT_AVHBENCH_DIR)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)

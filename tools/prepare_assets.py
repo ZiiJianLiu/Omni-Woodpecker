@@ -29,7 +29,12 @@ from owp.assets import (
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Prepare OWP assets from local files or Hugging Face.")
-    parser.add_argument("--model", choices=("qwen", "videollama2", "siglip", "all"), default="all")
+    parser.add_argument(
+        "--model",
+        choices=("none", "qwen", "videollama2", "siglip", "all"),
+        default="none",
+        help="Model asset to fetch. The default only prepares datasets.",
+    )
     parser.add_argument("--dataset", choices=("cmm", "avhbench", "all", "none"), default="none")
     parser.add_argument("--max-rows", type=int, default=0)
     parser.add_argument(
@@ -40,7 +45,9 @@ def main() -> int:
     )
     args = parser.parse_args()
 
-    models = ("qwen", "videollama2", "siglip") if args.model == "all" else (args.model,)
+    models = () if args.model == "none" else (
+        ("qwen", "videollama2", "siglip") if args.model == "all" else (args.model,)
+    )
     resolved_models: dict[str, str] = {}
     for kind in models:
         path = resolve_model_path(model_repo(kind), kind=kind)
