@@ -39,7 +39,6 @@ The input is UTF-8 JSONL. Each line is one independent request.
 | `video_path` | Video file path; use an empty string when unavailable | repository-relative or absolute string | `data/AVHBench/videos/02060.mp4` |
 | `audio_path` | Audio file path; use an empty string when unavailable | repository-relative or absolute string | `data/AVHBench/audios/02060.wav` |
 | `benchmark` | Optional dataset name used for media resolution | `avhbench` or `cmm` | `avhbench` |
-| `reference_answer` | Optional offline evaluation label; never used for intervention | string | `Yes` |
 
 The input must contain at least one valid media stream. Paths may be relative
 to the repository root, and the answer space must be `Yes`/`No`. For benchmark

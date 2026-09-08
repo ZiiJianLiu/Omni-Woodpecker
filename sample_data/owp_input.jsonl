@@ -1,3 +1,3 @@
-{"sample_id":"cmm:00000","benchmark":"cmm","question":"Did you see river in the video?","reference_answer":"yes","video_path":"sample_data/media/cmm_00000_video.mp4","audio_path":""}
-{"sample_id":"cmm:00400","benchmark":"cmm","question":"Did you hear machine operate in the audio?","reference_answer":"yes","video_path":"","audio_path":"sample_data/media/cmm_00400_audio.wav"}
-{"sample_id":"cmm:01200","benchmark":"cmm","question":"Did you hear bird churping in the audio?","reference_answer":"yes","video_path":"sample_data/media/cmm_01200_video.mp4","audio_path":"sample_data/media/cmm_01200_audio.wav"}
+{"sample_id":"cmm:00000","benchmark":"cmm","question":"Did you see river in the video?","video_path":"sample_data/media/cmm_00000_video.mp4","audio_path":""}
+{"sample_id":"cmm:00400","benchmark":"cmm","question":"Did you hear machine operate in the audio?","video_path":"","audio_path":"sample_data/media/cmm_00400_audio.wav"}
+{"sample_id":"cmm:01200","benchmark":"cmm","question":"Did you hear bird churping in the audio?","video_path":"sample_data/media/cmm_01200_video.mp4","audio_path":"sample_data/media/cmm_01200_audio.wav"}
