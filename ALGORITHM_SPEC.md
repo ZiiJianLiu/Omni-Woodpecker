@@ -47,6 +47,11 @@ manifests, missing CMM media are fetched
 to the user cache on first use. AVHBench media require local files or a dataset
 repository configured with `OWP_AVHBENCH_DATASET_ID`.
 
+For the bundled examples, use `sample_data/media/cmm_00000_video.mp4`,
+`sample_data/media/cmm_00400_audio.wav`, and the paired
+`sample_data/media/cmm_01200_video.mp4` / `cmm_01200_audio.wav` paths shown in
+`sample_data/owp_input.jsonl`.
+
 ## 3. Output
 
 The output is UTF-8 JSONL with one line per processed input. Intermediate views,
@@ -65,14 +70,29 @@ are not part of the public output.
 
 ## 4. Complete Example
 
-Use the representative requests in `sample_data/owp_input.jsonl` and run one backend:
+The repository includes the three requests and all referenced media in
+`sample_data/`. The importable integration interface is:
+
+```python
+from owp import correct
+
+results = correct(
+    "sample_data/owp_input.jsonl",
+    "results/owp_output.jsonl",
+    model="videollama2",
+)
+for result in results:
+    print(result["sample_id"], result["answer"], result["status"])
+```
+
+The same interface is exposed as a CLI. Run one backend:
 
 ```bash
 CUDA_VISIBLE_DEVICES=0 python src/owp_infer.py \
   --input sample_data/owp_input.jsonl \
   --output results/owp_output.jsonl \
   --model videollama2 \
-  --max-rows 1
+  --max-rows 0
 ```
 
 The same use case is available through Qwen2.5-Omni:
@@ -82,7 +102,7 @@ CUDA_VISIBLE_DEVICES=0 python src/owp_infer.py \
   --input sample_data/owp_input.jsonl \
   --output results/owp_output_qwen.jsonl \
   --model qwen \
-  --max-rows 1
+  --max-rows 0
 ```
 
 Read the final result without depending on internal files:
@@ -100,7 +120,7 @@ The same call is packaged as `examples/run_inference.py` for integration
 testing. It defaults to the bundled requests and accepts custom JSONL paths:
 
 ```bash
-python examples/run_inference.py --model videollama2 --max-rows 1
+python examples/run_inference.py --model videollama2
 # python examples/run_inference.py --input requests.jsonl --output results.jsonl
 ```
 
@@ -114,8 +134,9 @@ python examples/run_inference.py --model videollama2 --max-rows 1
   `requirements.txt`.
 - **System**: Linux is recommended; no custom CUDA extension or source build
   is required.
-- **Network**: Required on first run to fetch model checkpoints and CMM media;
-  cached runs can operate offline when all requested files are present.
+- **Network**: Required on first run to fetch model checkpoints. The bundled
+  three-row sample runs without downloading CMM media; custom CMM rows may
+  fetch benchmark media into the user cache.
 - **GPU**: One CUDA GPU with at least 24 GB memory for the 7B BF16 default
   configuration. Use `--dtype float16` when BF16 is unavailable.
 - **Models**: `Qwen/Qwen2.5-Omni-7B` or
@@ -126,7 +147,7 @@ python examples/run_inference.py --model videollama2 --max-rows 1
 
 ## 6. Expected Output Example
 
-For the representative requests in `sample_data/owp_input.jsonl`,
+For the representative requests and bundled media in `sample_data/`,
 `sample_data/owp_expected_output.jsonl` records a valid output shape:
 
 ```json

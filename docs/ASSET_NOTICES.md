@@ -1,6 +1,8 @@
 # Asset notices
 
-The source release keeps large model checkpoints and benchmark media out of Git.
+The source release keeps large model checkpoints and the full benchmark media
+out of Git. Four small CMM media files are intentionally tracked under
+`sample_data/media/` so the three integration examples are self-contained.
 The runtime resolves them from the Hugging Face repositories recorded in
 `owp/assets.py` and stores them in `OWP_CACHE_DIR` (or the
 default user cache). The first run therefore needs network access and enough

@@ -3,6 +3,7 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -11,6 +12,8 @@ SPEC = importlib.util.spec_from_file_location(
 )
 OWP_INFER = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(OWP_INFER)
+
+from owp import api as OWP_API
 
 
 class OwpInferContractTest(unittest.TestCase):
@@ -111,6 +114,41 @@ class OwpInferContractTest(unittest.TestCase):
                     input_path,
                     [{"sample_id": "first", "status": "ok", "answer": "No"}],
                 )
+
+    def test_public_api_returns_records_and_cleans_implicit_output(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp = Path(temp_dir)
+            media = temp / "sample.mp4"
+            media.write_bytes(b"test fixture")
+            source = temp / "input.jsonl"
+            self.write_jsonl(
+                source,
+                [{"sample_id": "sample-1", "video_path": str(media), "question": "Is it visible?"}],
+            )
+
+            def fake_run(command, cwd, env, check):
+                output = Path(command[command.index("--output") + 1])
+                output.write_text(
+                    json.dumps(
+                        {
+                            "sample_id": "sample-1",
+                            "answer": "Yes",
+                            "baseline_answer": "No",
+                            "target_modality": "visual",
+                            "intervention_applied": True,
+                            "status": "ok",
+                            "error": None,
+                        }
+                    )
+                    + "\n",
+                    encoding="utf-8",
+                )
+
+            with patch.object(OWP_API.subprocess, "run", side_effect=fake_run):
+                records = OWP_API.correct(source)
+
+            self.assertEqual(records[0]["answer"], "Yes")
+            self.assertEqual(list(temp.glob(".input.owp_output.jsonl")), [])
 
 
 if __name__ == "__main__":

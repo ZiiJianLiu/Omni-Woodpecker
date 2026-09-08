@@ -19,6 +19,7 @@ REQUIRED_FILES = (
     "data/AVHBench/QA.json",
     "data/CMM/all_data_final_reorg.json",
     "owp/assets.py",
+    "owp/api.py",
     "tools/prepare_assets.py",
     "src/run_owp.py",
     "src/owp_infer.py",
@@ -32,6 +33,11 @@ REQUIRED_FILES = (
     "sample_data/owp_input.jsonl",
     "sample_data/owp_expected_output.jsonl",
     "sample_data/README.md",
+    "sample_data/media/README.md",
+    "sample_data/media/cmm_00000_video.mp4",
+    "sample_data/media/cmm_00400_audio.wav",
+    "sample_data/media/cmm_01200_video.mp4",
+    "sample_data/media/cmm_01200_audio.wav",
     "examples/run_inference.py",
     "tests/test_owp_infer_contract.py",
 )
@@ -110,6 +116,13 @@ def main() -> int:
                 fail(f"sample_data input missing fields: {sorted(required_input - row.keys())}", errors)
             if not row.get("video_path") and not row.get("audio_path"):
                 fail(f"example input sample_id={row.get('sample_id')} has no media path", errors)
+            for key in ("video_path", "audio_path"):
+                value = str(row.get(key) or "")
+                if value and not (root / value).is_file():
+                    fail(
+                        f"example input media is not bundled: sample_id={row.get('sample_id')}, {key}={value}",
+                        errors,
+                    )
         for row in example_output:
             if not (required_output <= row.keys()):
                 fail(f"sample_data output missing fields: {sorted(required_output - row.keys())}", errors)

@@ -1,14 +1,15 @@
 # OWP code map
 
 The release keeps the public use-case wrapper and backend implementation
-separate. `src/owp_infer.py` is the only public algorithm entry point;
+separate. `owp.api.correct` is the importable integration interface and
+`src/owp_infer.py` is its CLI equivalent;
 `owp/` contains importable shared components; the remaining `src/` files are
 internal backend stages; and `third_party/VideoLLaMA2/` is the bundled runtime
 needed by the VideoLLaMA2 backend.
 
 | Paper operation | Release entry point | Main symbols |
 | --- | --- | --- |
-| Public use-case wrapper | `src/owp_infer.py` | JSONL input/output contract |
+| Public use-case wrapper | `owp.api.correct`, `src/owp_infer.py` | JSONL input/output contract |
 | Four-view conflict diagnosis | `src/intervention.py`, `src/run_owp.py`, and `src/probe_videollama2.py` | `diagnose_view`, `choose_target`, `run_row` |
 | Query-conditioned target typing | `src/probe_qwen.py` and `src/probe_videollama2.py` | `online_target_modality_from_question`, `build_base_conflict_budget`, `build_frozen_carriers` |
 | Evidence/prior decomposition | `src/intervention.py` and `src/intervention_videollama2.py` | `orthonormal_basis`, `subspace_projection`, `soft_minimal_suppression_delta`, `up_r_projection_delta` |
