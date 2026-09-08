@@ -1,3 +1,3 @@
-{"sample_id":"cmm:00000","answer":"Yes","baseline_answer":"Yes","target_modality":"visual","intervention_applied":false,"status":"ok","error":null}
-{"sample_id":"cmm:00400","answer":"Yes","baseline_answer":"Yes","target_modality":"audio","intervention_applied":false,"status":"ok","error":null}
-{"sample_id":"cmm:01200","answer":"Yes","baseline_answer":"Yes","target_modality":"audio","intervention_applied":false,"status":"ok","error":null}
+{"sample_id":"cmm:00000","answer":"Yes","status":"ok","error":null}
+{"sample_id":"cmm:00400","answer":"Yes","status":"ok","error":null}
+{"sample_id":"cmm:01200","answer":"Yes","status":"ok","error":null}

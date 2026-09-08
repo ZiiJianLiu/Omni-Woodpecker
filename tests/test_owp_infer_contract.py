@@ -78,18 +78,12 @@ class OwpInferContractTest(unittest.TestCase):
             {
                 "sample_id": "second",
                 "answer": None,
-                "baseline_answer": None,
-                "target_modality": "unknown",
-                "intervention_applied": False,
                 "status": "error",
                 "error": "backend failed",
             },
             {
                 "sample_id": "first",
                 "answer": "Yes",
-                "baseline_answer": "No",
-                "target_modality": "audio",
-                "intervention_applied": True,
                 "status": "ok",
             },
         ]
@@ -102,6 +96,7 @@ class OwpInferContractTest(unittest.TestCase):
         self.assertEqual(
             [row["sample_id"] for row in normalized], ["first", "second"]
         )
+        self.assertEqual(set(normalized[0]), {"sample_id", "answer", "status", "error"})
         self.assertIsNone(normalized[0]["error"])
         self.assertEqual(normalized[1]["error"], "backend failed")
 

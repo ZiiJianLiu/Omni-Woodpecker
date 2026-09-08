@@ -55,16 +55,14 @@ For the bundled examples, use `sample_data/media/cmm_00000_video.mp4`,
 ## 3. Output
 
 The output is UTF-8 JSONL with one line per processed input. Intermediate views,
-hidden states, carriers and model logits remain inside the run workspace and
-are not part of the public output.
+baseline answers, target modality, hidden states, carriers, model logits and
+edit flags remain inside the run workspace and are not part of the public
+output.
 
 | Item | Description | Format | Example |
 |---|---|---|---|
 | `sample_id` | Input identifier | string | `demo-0001` |
 | `answer` | OWP-corrected answer | `Yes` or `No` | `Yes` |
-| `baseline_answer` | Frozen model answer before editing | string | `Yes` |
-| `target_modality` | Query-relevant modality inferred by OWP | `audio`/`visual`/`unknown` | `audio` |
-| `intervention_applied` | Whether OWP applied a representation edit | boolean | `true` |
 | `status` | Processing status | `ok` or `error` | `ok` |
 | `error` | Error message when `status=error`; otherwise null | string or null | `null` |
 
@@ -151,7 +149,7 @@ For the representative requests and bundled media in `sample_data/`,
 `sample_data/owp_expected_output.jsonl` records a valid output shape:
 
 ```json
-{"sample_id":"cmm:00000","answer":"Yes","baseline_answer":"Yes","target_modality":"visual","intervention_applied":false,"status":"ok","error":null}
+{"sample_id":"cmm:00000","answer":"Yes","status":"ok","error":null}
 ```
 
 The answer values depend on the selected checkpoint and media. The fixture is

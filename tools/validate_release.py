@@ -105,9 +105,6 @@ def main() -> int:
         required_output = {
             "sample_id",
             "answer",
-            "baseline_answer",
-            "target_modality",
-            "intervention_applied",
             "status",
             "error",
         }

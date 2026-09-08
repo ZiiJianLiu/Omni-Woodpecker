@@ -19,6 +19,7 @@ from typing import Any, Mapping
 
 
 ROOT = Path(__file__).resolve().parents[1]
+PUBLIC_OUTPUT_FIELDS = ("sample_id", "answer", "status", "error")
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
@@ -339,7 +340,7 @@ def order_and_validate_outputs(
             row["error"] = None
         elif not str(row.get("error") or "").strip():
             row["error"] = "Backend failed without an error message"
-        ordered.append(row)
+        ordered.append({field: row.get(field) for field in PUBLIC_OUTPUT_FIELDS})
     return ordered
 
 

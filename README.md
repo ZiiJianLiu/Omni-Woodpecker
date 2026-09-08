@@ -40,14 +40,11 @@ tracked in `sample_data/media/`. A fresh clone can therefore validate the
 input/output contract without downloading the full CMM dataset. The model
 checkpoint is still downloaded or supplied locally at runtime.
 
-Output is UTF-8 JSONL, one result per input, with `sample_id`, `answer`,
-`baseline_answer`, `target_modality`, `intervention_applied`, and `status`.
-The record also contains `error` (null for successful requests and a readable
-message when `status` is `error`).
-`intervention_applied` records whether OWP wrote a hidden/path update; it can
-be `true` even when the constrained answer remains unchanged.
-Typing, modality diagnosis, hidden-state decomposition, and editing are
-internal stages and are not separate use cases.
+Output is UTF-8 JSONL, one final result per input, with only `sample_id`,
+`answer`, `status`, and `error`. `error` is null for successful requests and a
+readable message when `status` is `error`. Typing, modality diagnosis,
+baseline answers, hidden-state decomposition, and editing remain internal
+stages and are not separate use cases or public output fields.
 
 `sample_data/owp_expected_output.jsonl` is a contract fixture showing the output
 schema and representative values. It is not a performance claim: generated
