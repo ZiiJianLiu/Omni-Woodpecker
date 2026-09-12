@@ -14,9 +14,11 @@ answer without training or changing model weights.
 |---:|---|---|
 | 1 | Cross-modal hallucination correction | Read question/media records and return one corrected answer record per input. |
 
-The use case has one public entry point: `src/owp_infer.py`. Typing, view
-diagnosis, carrier construction and hidden-state editing are internal stages of
-this use case and are not separate delivery interfaces.
+The use case has one public interface with two equivalent forms:
+`owp.correct` for Python integration and `src/owp_infer.py` for command-line
+integration. Typing, view diagnosis, carrier construction and hidden-state
+editing are internal stages of this use case and are not separate delivery
+interfaces.
 
 ---
 

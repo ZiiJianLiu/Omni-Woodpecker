@@ -3,8 +3,9 @@
 The release keeps the public use-case wrapper and backend implementation
 separate. `owp.api.correct` is the importable integration interface and
 `src/owp_infer.py` is its CLI equivalent;
-`owp/` contains importable shared components; the remaining `src/` files are
-internal backend stages; and `third_party/VideoLLaMA2/` is the bundled runtime
+`owp/` contains the integration API and shared components; the remaining `src/`
+files are internal backend stages and are not separate use cases; and
+`third_party/VideoLLaMA2/` is the bundled runtime
 needed by the VideoLLaMA2 backend.
 
 | Paper operation | Release entry point | Main symbols |

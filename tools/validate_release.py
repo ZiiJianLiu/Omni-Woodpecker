@@ -219,6 +219,7 @@ def main() -> int:
             "owp.evaluation.answer_policy",
             "owp.evaluation.datasets",
             "owp.modules.question_conditioned_evidence",
+            "owp.api",
             "owp_infer",
         ):
             try:
