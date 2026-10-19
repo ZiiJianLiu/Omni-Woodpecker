@@ -1,6 +1,8 @@
-<!-- LOGO: <p align="center"><img src="./assets/omni_woodpecker.png" width="75%"></p> -->
-
 <h1 align="center">Omni-Woodpecker: Hallucination Correction via<br>Evidence-Prior Rebalancing for Omni LLMs</h1>
+
+<p align="center">
+    <img src="./assets/omni_woodpecker.png" width="75%" height="75%">
+</p>
 
 <p align="center">
   <a href="https://arxiv.org/abs/XXXX.XXXXX"><img src="https://img.shields.io/badge/arXiv-XXXX.XXXXX-b31b1b?logo=arxiv&logoColor=white" alt="arXiv"></a>
