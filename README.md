@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <a href="https://arxiv.org/abs/XXXX.XXXXX"><img src="https://img.shields.io/badge/arXiv-XXXX.XXXXX-b31b1b?logo=arxiv&logoColor=white" alt="arXiv"></a>
+  <a href="https://arxiv.org/abs/2610.27103"><img src="https://img.shields.io/badge/arXiv-2610.27103-b31b1b?logo=arxiv&logoColor=white" alt="arXiv"></a>
   <a href="https://github.com/ZiiJianLiu/Omni-Woodpecker"><img src="https://img.shields.io/badge/Code-GitHub-181717?logo=github&logoColor=white" alt="Code"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-2ea44f" alt="License"></a>
   <img src="https://img.shields.io/badge/Training-Free-4296C7" alt="Training-free">
@@ -71,7 +71,7 @@ If you have any question, please feel free to open an issue or email bradyfu24@g
 We perform experiments on two frozen omni-modal backbones:
 - [Qwen2.5-Omni-7B](https://huggingface.co/Qwen/Qwen2.5-Omni-7B), [VideoLLaMA2-AV](https://huggingface.co/DAMO-NLP-SG/VideoLLaMA2.1-7B-AV)
 
-The experimental results are shown below. For more details, please check out [our paper](https://arxiv.org/abs/XXXX.XXXXX).
+The experimental results are shown below. For more details, please check out [our paper](https://arxiv.org/abs/2610.27103).
 
 ### 📍 CMM and AVHBench Result
 
@@ -215,7 +215,7 @@ If you find our project helpful to your research, please consider citing:
 @article{liu2026omniwoodpecker,
   title={Omni-Woodpecker: Hallucination Correction via Evidence-Prior Rebalancing for Omni LLMs},
   author={Liu, Zijian and Fu, Chaoyou and Yang, Yan and Shan, Caifeng and He, Ran},
-  journal={arXiv preprint arXiv:XXXX.XXXXX},
+  journal={arXiv preprint arXiv:2610.27103},
   year={2026}
 }
 ```
