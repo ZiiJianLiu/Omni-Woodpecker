@@ -6,6 +6,7 @@
 
 <p align="center">
   <a href="https://arxiv.org/abs/2610.27103"><img src="https://img.shields.io/badge/arXiv-2610.27103-b31b1b?logo=arxiv&logoColor=white" alt="arXiv"></a>
+  <a href="https://huggingface.co/papers/2610.27103"><img src="https://img.shields.io/badge/🤗%20Paper-Hugging%20Face-ffc107" alt="Hugging Face Paper"></a>
   <a href="https://github.com/ZiiJianLiu/Omni-Woodpecker"><img src="https://img.shields.io/badge/Code-GitHub-181717?logo=github&logoColor=white" alt="Code"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-2ea44f" alt="License"></a>
   <img src="https://img.shields.io/badge/Training-Free-4296C7" alt="Training-free">
